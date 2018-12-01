@@ -574,6 +574,7 @@ struct atf_tc_impl {
     atf_tc_head_t m_head;
     atf_tc_body_t m_body;
     atf_tc_cleanup_t m_cleanup;
+    atf_tc_setup_t m_setup;
 };
 
 /*
@@ -583,7 +584,7 @@ struct atf_tc_impl {
 atf_error_t
 atf_tc_init(atf_tc_t *tc, const char *ident, atf_tc_head_t head,
             atf_tc_body_t body, atf_tc_cleanup_t cleanup,
-            const char *const *config)
+            atf_tc_setup_t setup, const char *const *config)
 {
     atf_error_t err;
 
@@ -597,6 +598,7 @@ atf_tc_init(atf_tc_t *tc, const char *ident, atf_tc_head_t head,
     tc->pimpl->m_head = head;
     tc->pimpl->m_body = body;
     tc->pimpl->m_cleanup = cleanup;
+    tc->pimpl->m_setup = setup;
 
     err = atf_map_init_charpp(&tc->pimpl->m_config, config);
     if (atf_is_error(err))
@@ -612,6 +614,12 @@ atf_tc_init(atf_tc_t *tc, const char *ident, atf_tc_head_t head,
 
     if (cleanup != NULL) {
         err = atf_tc_set_md_var(tc, "has.cleanup", "true");
+        if (atf_is_error(err))
+            goto err_map;
+    }
+
+    if (setup != NULL) {
+        err = atf_tc_set_md_var(tc, "has.setup", "true");
         if (atf_is_error(err))
             goto err_map;
     }
@@ -642,7 +650,7 @@ atf_tc_init_pack(atf_tc_t *tc, const atf_tc_pack_t *pack,
                  const char *const *config)
 {
     return atf_tc_init(tc, pack->m_ident, pack->m_head, pack->m_body,
-                       pack->m_cleanup, config);
+                       pack->m_cleanup, pack->m_setup, config);
 }
 
 void
@@ -1079,6 +1087,14 @@ atf_tc_cleanup(const atf_tc_t *tc)
 {
     if (tc->pimpl->m_cleanup != NULL)
         tc->pimpl->m_cleanup(tc);
+    return atf_no_error(); /* XXX */
+}
+
+atf_error_t
+atf_tc_setup(const atf_tc_t *tc)
+{
+    if (tc->pimpl->m_setup != NULL)
+        tc->pimpl->m_setup(tc);
     return atf_no_error(); /* XXX */
 }
 

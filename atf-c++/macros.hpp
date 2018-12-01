@@ -44,7 +44,8 @@
         atfu_tc_ ## name(void); \
     }; \
     static atfu_tc_ ## name* atfu_tcptr_ ## name; \
-    atfu_tc_ ## name::atfu_tc_ ## name(void) : atf::tests::tc(#name, false) {} \
+    atfu_tc_ ## name::atfu_tc_ ## name(void) : \
+        atf::tests::tc(#name, false, false) {} \
     }
 
 #define ATF_TEST_CASE(name) \
@@ -56,7 +57,8 @@
         atfu_tc_ ## name(void); \
     }; \
     static atfu_tc_ ## name* atfu_tcptr_ ## name; \
-    atfu_tc_ ## name::atfu_tc_ ## name(void) : atf::tests::tc(#name, false) {} \
+    atfu_tc_ ## name::atfu_tc_ ## name(void) : \
+        atf::tests::tc(#name, false, false) {} \
     }
 
 #define ATF_TEST_CASE_WITH_CLEANUP(name) \
@@ -69,7 +71,22 @@
         atfu_tc_ ## name(void); \
     }; \
     static atfu_tc_ ## name* atfu_tcptr_ ## name; \
-    atfu_tc_ ## name::atfu_tc_ ## name(void) : atf::tests::tc(#name, true) {} \
+    atfu_tc_ ## name::atfu_tc_ ## name(void) : \
+        atf::tests::tc(#name, true, false) {} \
+    }
+
+#define ATF_TEST_CASE_WITH_SETUP(name) \
+    namespace { \
+    class atfu_tc_ ## name : public atf::tests::tc { \
+        void head(void); \
+        void body(void) const; \
+        void setup(void) const; \
+    public: \
+        atfu_tc_ ## name(void); \
+    }; \
+    static atfu_tc_ ## name* atfu_tcptr_ ## name; \
+    atfu_tc_ ## name::atfu_tc_ ## name(void) : \
+        atf::tests::tc(#name, false, true) {} \
     }
 
 #define ATF_TEST_CASE_NAME(name) atfu_tc_ ## name
@@ -87,6 +104,11 @@
 #define ATF_TEST_CASE_CLEANUP(name) \
     void \
     atfu_tc_ ## name::cleanup(void) \
+        const
+
+#define ATF_TEST_CASE_SETUP(name) \
+    void \
+    atfu_tc_ ## name::setup(void) \
         const
 
 #define ATF_FAIL(reason) atf::tests::tc::fail(reason)

@@ -63,13 +63,13 @@ ATF_TC_BODY(init, tcin)
     atf_tc_t tc;
 
     RE(atf_tc_init(&tc, "test1", ATF_TC_HEAD_NAME(empty),
-                   ATF_TC_BODY_NAME(empty), NULL, NULL));
+                   ATF_TC_BODY_NAME(empty), NULL, NULL, NULL));
     ATF_REQUIRE(strcmp(atf_tc_get_ident(&tc), "test1") == 0);
     ATF_REQUIRE(!atf_tc_has_md_var(&tc, "test-var"));
     atf_tc_fini(&tc);
 
     RE(atf_tc_init(&tc, "test2", ATF_TC_HEAD_NAME(test_var),
-                   ATF_TC_BODY_NAME(empty), NULL, NULL));
+                   ATF_TC_BODY_NAME(empty), NULL, NULL, NULL));
     ATF_REQUIRE(strcmp(atf_tc_get_ident(&tc), "test2") == 0);
     ATF_REQUIRE(atf_tc_has_md_var(&tc, "test-var"));
     atf_tc_fini(&tc);
@@ -118,7 +118,7 @@ ATF_TC_BODY(vars, tcin)
     atf_tc_t tc;
 
     RE(atf_tc_init(&tc, "test1", ATF_TC_HEAD_NAME(empty),
-                   ATF_TC_BODY_NAME(empty), NULL, NULL));
+                   ATF_TC_BODY_NAME(empty), NULL, NULL, NULL));
     ATF_REQUIRE(!atf_tc_has_md_var(&tc, "test-var"));
     RE(atf_tc_set_md_var(&tc, "test-var", "Test value"));
     ATF_REQUIRE(atf_tc_has_md_var(&tc, "test-var"));
@@ -139,13 +139,13 @@ ATF_TC_BODY(config, tcin)
     const char *const config[] = { "test-var", "test-value", NULL };
 
     RE(atf_tc_init(&tc, "test1", ATF_TC_HEAD_NAME(empty),
-                   ATF_TC_BODY_NAME(empty), NULL, NULL));
+                   ATF_TC_BODY_NAME(empty), NULL, NULL, NULL));
     ATF_REQUIRE(!atf_tc_has_config_var(&tc, "test-var"));
     ATF_REQUIRE(!atf_tc_has_md_var(&tc, "test-var"));
     atf_tc_fini(&tc);
 
     RE(atf_tc_init(&tc, "test1", ATF_TC_HEAD_NAME(empty),
-                   ATF_TC_BODY_NAME(empty), NULL, config));
+                   ATF_TC_BODY_NAME(empty), NULL, NULL, config));
     ATF_REQUIRE(atf_tc_has_config_var(&tc, "test-var"));
     ATF_REQUIRE(strcmp(atf_tc_get_config_var(&tc, "test-var"),
                      "test-value") == 0);

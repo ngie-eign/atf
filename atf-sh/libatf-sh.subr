@@ -64,7 +64,7 @@ Test_Cases=
 #   Adds the given test case to the list of test cases that form the test
 #   program.  The name provided here must be accompanied by two functions
 #   named after it: <tc-name>_head and <tc-name>_body, and optionally by
-#   a <tc-name>_cleanup function.
+#   a <tc-name>_cleanup and/or a <tc-name>_setup function.
 #
 atf_add_test_case()
 {
@@ -383,12 +383,13 @@ atf_skip()
 }
 
 #
-# atf_test_case tc-name cleanup
+# atf_test_case tc-name cleanup setup
 #
 #   Defines a new test case named tc-name.  The name provided here must be
 #   accompanied by two functions named after it: <tc-name>_head and
 #   <tc-name>_body.  If cleanup is set to 'cleanup', then this also expects
-#   a <tc-name>_cleanup function to be defined.
+#   a <tc-name>_cleanup function to be defined.  Similarly, if setup is set to
+#   'setup', then this also expects a <tc-name>_setup function to be defined.
 #
 atf_test_case()
 {
@@ -400,6 +401,13 @@ atf_test_case()
     else
         eval "${1}_cleanup() {
             _atf_error 1 'Test case ${1} declared without a cleanup routine'; }"
+    fi
+    if [ "${3}" = setup ]; then
+        eval __has_setup_${1}=true
+        eval "${1}_setup() { :; }"
+    else
+        eval "${1}_setup() {
+            _atf_error 1 'Test case ${1} declared without a setup routine'; }"
     fi
 }
 
@@ -584,6 +592,10 @@ _atf_parse_head()
         atf_set has.cleanup "true"
     fi
 
+    if _atf_has_setup "${1}"; then
+        atf_set has.setup "true"
+    fi
+
     ${1}_head
     atf_set ident "${1}"
 
@@ -604,9 +616,13 @@ _atf_run_tc()
         _tcname=${1%%:*}
         _tcpart=${1#*:}
 
-        if [ "${_tcpart}" != body -a "${_tcpart}" != cleanup ]; then
+        case "${_tcpart}" in
+        body|cleanup|setup)
+            ;;
+        *)
             _atf_syntax_error "Unknown test case part \`${_tcpart}'"
-        fi
+            ;;
+        esac
         ;;
 
     *)
@@ -634,6 +650,12 @@ _atf_run_tc()
             Expect=pass
             atf_fail "Test case body returned a non-ok exit code, but" \
                 "this is not allowed"
+        fi
+        ;;
+    setup)
+        if _atf_has_setup "${_tcname}"; then
+            ${_tcname}_setup || _atf_error 128 "The test case setup" \
+                "returned a non-ok exit code, but this is not allowed"
         fi
         ;;
     cleanup)
@@ -671,6 +693,19 @@ _atf_has_cleanup()
 {
     _found=true
     eval "[ x\"\${__has_cleanup_${1}}\" = xtrue ] || _found=false"
+    [ "${_found}" = true ]
+}
+
+#
+# _atf_has_setup tc-name
+#
+#   Returns a boolean indicating if the given test case has a setup
+#   routine or not.
+#
+_atf_has_setup()
+{
+    _found=true
+    eval "[ x\"\${__has_setup_${1}}\" = xtrue ] || _found=false"
     [ "${_found}" = true ]
 }
 

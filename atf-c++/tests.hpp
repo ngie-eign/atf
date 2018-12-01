@@ -79,13 +79,14 @@ protected:
     virtual void head(void);
     virtual void body(void) const = 0;
     virtual void cleanup(void) const;
+    virtual void setup(void) const;
 
     void require_prog(const std::string&) const;
 
     friend struct tc_impl;
 
 public:
-    tc(const std::string&, const bool);
+    tc(const std::string&, const bool, const bool);
     virtual ~tc(void);
 
     void init(const vars_map&);
@@ -101,6 +102,7 @@ public:
 
     void run(const std::string&) const;
     void run_cleanup(void) const;
+    void run_setup(void) const;
 
     // To be called from the child process only.
     static void pass(void) ATF_DEFS_ATTRIBUTE_NORETURN;

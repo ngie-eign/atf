@@ -37,6 +37,7 @@ struct atf_tc;
 typedef void (*atf_tc_head_t)(struct atf_tc *);
 typedef void (*atf_tc_body_t)(const struct atf_tc *);
 typedef void (*atf_tc_cleanup_t)(const struct atf_tc *);
+typedef void (*atf_tc_setup_t)(const struct atf_tc *);
 
 /* ---------------------------------------------------------------------
  * The "atf_tc_pack" type.
@@ -51,6 +52,7 @@ struct atf_tc_pack {
     atf_tc_head_t m_head;
     atf_tc_body_t m_body;
     atf_tc_cleanup_t m_cleanup;
+    atf_tc_setup_t m_setup;
 };
 typedef const struct atf_tc_pack atf_tc_pack_t;
 
@@ -66,7 +68,7 @@ typedef struct atf_tc atf_tc_t;
 
 /* Constructors/destructors. */
 atf_error_t atf_tc_init(atf_tc_t *, const char *, atf_tc_head_t,
-                        atf_tc_body_t, atf_tc_cleanup_t,
+                        atf_tc_body_t, atf_tc_cleanup_t, atf_tc_setup_t,
                         const char *const *);
 atf_error_t atf_tc_init_pack(atf_tc_t *, atf_tc_pack_t *,
                              const char *const *);
@@ -97,6 +99,7 @@ atf_error_t atf_tc_set_md_var(atf_tc_t *, const char *, const char *, ...);
 
 atf_error_t atf_tc_run(const atf_tc_t *, const char *);
 atf_error_t atf_tc_cleanup(const atf_tc_t *);
+atf_error_t atf_tc_setup(const atf_tc_t *);
 
 /* To be run from test case bodies only. */
 void atf_tc_fail(const char *, ...)

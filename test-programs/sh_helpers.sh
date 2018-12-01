@@ -299,6 +299,73 @@ metadata_no_head_body()
 }
 
 # -------------------------------------------------------------------------
+# Helper tests for "t_setup".
+# -------------------------------------------------------------------------
+
+atf_test_case setup_pass cleanup setup
+setup_pass_head()
+{
+    atf_set "descr" "Helper test case for the t_setup test program"
+}
+setup_pass_setup()
+{
+    touch $(atf_config_get tmpfile).setup
+}
+setup_pass_body()
+{
+    touch $(atf_config_get tmpfile).body
+}
+setup_pass_cleanup()
+{
+    if [ $(atf_config_get cleanup no) = yes ]; then
+        rm $(atf_config_get tmpfile).setup
+        rm $(atf_config_get tmpfile).body
+    fi
+}
+
+atf_test_case setup_fail cleanup setup
+setup_fail_head()
+{
+    atf_set "descr" "Helper test case for the t_setup test program"
+}
+setup_fail_setup()
+{
+    atf_fail "failing setup"
+}
+setup_fail_body()
+{
+    touch $(atf_config_get tmpfile)
+}
+setup_fail_cleanup()
+{
+    if [ -f $(atf_config_get tmpfile) ]; then
+        exit 1
+    else
+        exit 0
+    fi
+}
+
+atf_test_case setup_skip_body cleanup setup
+setup_skip_body_head()
+{
+    atf_set "descr" "Helper test case for the t_setup test program"
+}
+setup_skip_body_setup()
+{
+    touch $(atf_config_get tmpfile)
+}
+setup_skip_body_body()
+{
+    atf_skip "Skipping"
+}
+setup_skip_body_cleanup()
+{
+    if [ $(atf_config_get cleanup no) = yes ]; then
+        rm $(atf_config_get tmpfile)
+    fi
+}
+
+# -------------------------------------------------------------------------
 # Helper tests for "t_srcdir".
 # -------------------------------------------------------------------------
 
@@ -377,6 +444,11 @@ atf_init_test_cases()
     # Add helper tests for t_meta_data.
     atf_add_test_case metadata_no_descr
     atf_add_test_case metadata_no_head
+
+    # Add helper tests for t_setup.
+    atf_add_test_case setup_pass
+    atf_add_test_case setup_fail
+    atf_add_test_case setup_skip_body
 
     # Add helper tests for t_srcdir.
     atf_add_test_case srcdir_exists

@@ -154,10 +154,13 @@ public:
     std::string m_ident;
     atf_tc_t m_tc;
     bool m_has_cleanup;
+    bool m_has_setup;
 
-    tc_impl(const std::string& ident, const bool has_cleanup) :
+    tc_impl(const std::string& ident, const bool has_cleanup,
+        const bool has_setup) :
         m_ident(ident),
-        m_has_cleanup(has_cleanup)
+        m_has_cleanup(has_cleanup),
+        m_has_setup(has_setup)
     {
     }
 
@@ -186,10 +189,20 @@ public:
         INV(iter != cwraps.end());
         (*iter).second->cleanup();
     }
+
+    static void
+    wrap_setup(const atf_tc_t *tc)
+    {
+        std::map< const atf_tc_t*, const impl::tc* >::const_iterator iter =
+            cwraps.find(tc);
+        INV(iter != cwraps.end());
+        (*iter).second->setup();
+    }
 };
 
-impl::tc::tc(const std::string& ident, const bool has_cleanup) :
-    pimpl(new tc_impl(ident, has_cleanup))
+impl::tc::tc(const std::string& ident, const bool has_cleanup,
+    const bool has_setup) :
+    pimpl(new tc_impl(ident, has_cleanup, has_setup))
 {
 }
 
@@ -221,7 +234,7 @@ impl::tc::init(const vars_map& config)
 
     err = atf_tc_init(&pimpl->m_tc, pimpl->m_ident.c_str(), pimpl->wrap_head,
         pimpl->wrap_body, pimpl->m_has_cleanup ? pimpl->wrap_cleanup : NULL,
-        array.data());
+        pimpl->m_has_setup ? pimpl->wrap_setup : NULL, array.data());
     if (atf_is_error(err))
         throw_atf_error(err);
 }
@@ -307,12 +320,27 @@ impl::tc::run_cleanup(void)
 }
 
 void
+impl::tc::run_setup(void)
+    const
+{
+    atf_error_t err = atf_tc_setup(&pimpl->m_tc);
+    if (atf_is_error(err))
+        throw_atf_error(err);
+}
+
+void
 impl::tc::head(void)
 {
 }
 
 void
 impl::tc::cleanup(void)
+    const
+{
+}
+
+void
+impl::tc::setup(void)
     const
 {
 }
@@ -406,7 +434,7 @@ namespace {
 
 typedef std::vector< impl::tc * > tc_vector;
 
-enum tc_part { BODY, CLEANUP };
+enum tc_part { SETUP, BODY, CLEANUP };
 
 static void
 parse_vflag(const std::string& str, atf::tests::vars_map& vars)
@@ -516,6 +544,8 @@ process_tcarg(const std::string& tcarg)
             return std::make_pair(tcname, BODY);
         else if (partname == "cleanup")
             return std::make_pair(tcname, CLEANUP);
+        else if (partname == "setup")
+            return std::make_pair(tcname, SETUP);
         else {
             throw usage_error("Invalid test case part `%s'", partname.c_str());
         }
@@ -545,6 +575,9 @@ run_tc(tc_vector& tcs, const std::string& tcarg, const atf::fs::path& resfile)
         break;
     case CLEANUP:
         tc->run_cleanup();
+        break;
+    case SETUP:
+        tc->run_setup();
         break;
     default:
         UNREACHABLE;
