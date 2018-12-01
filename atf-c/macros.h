@@ -48,6 +48,7 @@
         .m_head = NULL, \
         .m_body = atfu_ ## tc ## _body, \
         .m_cleanup = NULL, \
+        .m_setup = NULL, \
     }
 
 #define ATF_TC(tc) \
@@ -59,6 +60,7 @@
         .m_head = atfu_ ## tc ## _head, \
         .m_body = atfu_ ## tc ## _body, \
         .m_cleanup = NULL, \
+        .m_setup = NULL, \
     }
 
 #define ATF_TC_WITH_CLEANUP(tc) \
@@ -71,6 +73,20 @@
         .m_head = atfu_ ## tc ## _head, \
         .m_body = atfu_ ## tc ## _body, \
         .m_cleanup = atfu_ ## tc ## _cleanup, \
+        .m_setup = NULL, \
+    }
+
+#define ATF_TC_WITH_SETUP(tc) \
+    static void atfu_ ## tc ## _head(atf_tc_t *); \
+    static void atfu_ ## tc ## _body(const atf_tc_t *); \
+    static void atfu_ ## tc ## _setup(const atf_tc_t *); \
+    static atf_tc_t atfu_ ## tc ## _tc; \
+    static atf_tc_pack_t atfu_ ## tc ## _tc_pack = { \
+        .m_ident = #tc, \
+        .m_head = atfu_ ## tc ## _head, \
+        .m_body = atfu_ ## tc ## _body, \
+        .m_cleanup = NULL, \
+        .m_setup = atfu_ ## tc ## _setup, \
     }
 
 #define ATF_TC_HEAD(tc, tcptr) \
@@ -96,6 +112,14 @@
 
 #define ATF_TC_CLEANUP_NAME(tc) \
     (atfu_ ## tc ## _cleanup)
+
+#define ATF_TC_SETUP(tc, tcptr) \
+    static \
+    void \
+    atfu_ ## tc ## _setup(const atf_tc_t *tcptr ATF_DEFS_ATTRIBUTE_UNUSED)
+
+#define ATF_TC_SETUP_NAME(tc) \
+    (atfu_ ## tc ## _setup)
 
 #define ATF_TP_ADD_TCS(tps) \
     static atf_error_t atfu_tp_add_tcs(atf_tp_t *); \

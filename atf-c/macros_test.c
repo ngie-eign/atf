@@ -82,7 +82,7 @@ init_and_run_h_tc(const char *name, void (*head)(atf_tc_t *),
     atf_tc_t tc;
     const char *const config[] = { NULL };
 
-    RE(atf_tc_init(&tc, name, head, body, NULL, config));
+    RE(atf_tc_init(&tc, name, head, body, NULL, NULL, config));
     run_h_tc(&tc, "output", "error", "result");
     atf_tc_fini(&tc);
 }
