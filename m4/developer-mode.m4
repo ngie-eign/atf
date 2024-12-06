@@ -55,8 +55,8 @@ AC_DEFUN([KYUA_DEVELOPER_MODE], [
     AC_ARG_ENABLE(
         [developer],
         AS_HELP_STRING([--enable-developer], [enable developer features]),,
-        [if test -d ${srcdir}/.git; then
-             AC_MSG_NOTICE([building from HEAD; developer mode autoenabled])
+        [if test -d "${srcdir}/.git"; then
+             AC_MSG_NOTICE([building from HEAD (developer mode auto-enabled)])
              enable_developer=yes
          else
              enable_developer=no
@@ -97,10 +97,12 @@ AC_DEFUN([KYUA_DEVELOPER_MODE], [
                    -Wsign-promo \
                    -Wsynth"
 
-    if test ${enable_developer} = yes; then
+    if test "${enable_developer}" = yes; then
+        AC_MSG_NOTICE([Developer mode enabled])
         try_werror=yes
         try_c_cxx_flags="${try_c_cxx_flags} -g -Werror"
     else
+        AC_MSG_NOTICE([Developer mode disabled])
         try_werror=no
         try_c_cxx_flags="${try_c_cxx_flags} -DNDEBUG"
     fi
