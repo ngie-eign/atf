@@ -792,8 +792,8 @@ out:
 atf_error_t
 atf_fs_mkdtemp(atf_fs_path_t *p)
 {
+    char *buf = NULL;
     atf_error_t err;
-    char *buf;
 
     if (!check_umask(S_IRWXU, S_IRWXU)) {
         err = invalid_umask_error(p, atf_fs_stat_dir_type, current_umask());
@@ -806,22 +806,23 @@ atf_fs_mkdtemp(atf_fs_path_t *p)
 
     err = do_mkdtemp(buf);
     if (atf_is_error(err))
-        goto out_buf;
+        goto out;
 
     replace_contents(p, buf);
 
     INV(!atf_is_error(err));
-out_buf:
-    free(buf);
+
 out:
+    free(buf);
+
     return err;
 }
 
 atf_error_t
 atf_fs_mkstemp(atf_fs_path_t *p, int *fdout)
 {
+    char *buf = NULL;
     atf_error_t err;
-    char *buf;
     int fd;
 
     if (!check_umask(S_IRWXU, S_IRWXU)) {
@@ -835,15 +836,16 @@ atf_fs_mkstemp(atf_fs_path_t *p, int *fdout)
 
     err = do_mkstemp(buf, &fd);
     if (atf_is_error(err))
-        goto out_buf;
+        goto out;
 
     replace_contents(p, buf);
     *fdout = fd;
 
     INV(!atf_is_error(err));
-out_buf:
-    free(buf);
+
 out:
+    free(buf);
+
     return err;
 }
 
