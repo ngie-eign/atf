@@ -454,9 +454,7 @@ init_tcs(void (*add_tcs)(tc_vector&), tc_vector& tcs,
          const atf::tests::vars_map& vars)
 {
     add_tcs(tcs);
-    for (tc_vector::iterator iter = tcs.begin(); iter != tcs.end(); iter++) {
-        impl::tc* tc = *iter;
-
+    for (auto& tc : tcs) {
         tc->init(vars);
     }
 }
@@ -619,18 +617,22 @@ safe_main(int argc, char** argv, void (*add_tcs)(tc_vector&))
             throw usage_error("Cannot provide more than one test case name");
         INV(argc == 1);
     }
-
     tc_vector tcs;
-    if (lflag) {
-        init_tcs(add_tcs, tcs, vars);
-        errcode = list_tcs(tcs);
-    } else {
-        init_tcs(add_tcs, tcs, vars);
-        errcode = run_tc(tcs, argv[0], resfile);
+    try {
+        if (lflag) {
+            init_tcs(add_tcs, tcs, vars);
+            errcode = list_tcs(tcs);
+        } else {
+            init_tcs(add_tcs, tcs, vars);
+            errcode = run_tc(tcs, argv[0], resfile);
+        }
+    } catch (...) {
+        for (auto& tc: tcs) {
+            delete tc;
+        }
+        throw;
     }
-    for (tc_vector::iterator iter = tcs.begin(); iter != tcs.end(); iter++) {
-        impl::tc* tc = *iter;
-
+    for (auto& tc: tcs) {
         delete tc;
     }
 
