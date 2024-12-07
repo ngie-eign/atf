@@ -621,6 +621,9 @@ safe_main(int argc, char** argv, void (*add_tcs)(tc_vector&))
         }
         throw;
     }
+    for (auto& tc: tcs) {
+        delete tc;
+    }
 
     return errcode;
 }
