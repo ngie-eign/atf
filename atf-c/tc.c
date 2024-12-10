@@ -651,6 +651,7 @@ atf_tc_fini(atf_tc_t *tc)
     atf_map_fini(&tc->pimpl->m_config);
     atf_map_fini(&tc->pimpl->m_vars);
     free(tc->pimpl);
+    tc->pimpl = NULL;
 }
 
 /*
@@ -812,8 +813,10 @@ atf_tc_set_md_var(atf_tc_t *tc, const char *name, const char *fmt, ...)
 
     if (!atf_is_error(err))
         err = atf_map_insert(&tc->pimpl->m_vars, name, value, true);
-    else
+    else {
         free(value);
+        value = NULL;
+    }
 
     return err;
 }
