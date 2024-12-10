@@ -261,10 +261,15 @@ static
 void
 atf_process_child_fini(atf_process_child_t *c)
 {
-    if (c->m_stdout != -1)
+    if (c->m_stdout != -1) {
         close(c->m_stdout);
-    if (c->m_stderr != -1)
+        c->m_stdout = -1;
+    }
+    if (c->m_stderr != -1) {
         close(c->m_stderr);
+        c->m_stderr = -1;
+    }
+    c->m_pid = 0;
 }
 
 atf_error_t
