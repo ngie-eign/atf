@@ -198,8 +198,8 @@ params_fini(struct params *p)
     atf_map_fini(&p->m_config);
     atf_fs_path_fini(&p->m_resfile);
     atf_fs_path_fini(&p->m_srcdir);
-    if (p->m_tcname != NULL)
-        free(p->m_tcname);
+    free(p->m_tcname);
+    p->m_tcname = NULL;
 }
 
 static
@@ -281,6 +281,7 @@ list_tcs(const atf_tp_t *tp)
         atf_utils_free_charpp(vars);
     }
     free(tcs);
+    tcs = NULL;
 }
 
 /* ---------------------------------------------------------------------
