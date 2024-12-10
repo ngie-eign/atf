@@ -206,9 +206,12 @@ atf_map_fini(atf_map_t *m)
     atf_list_for_each(iter, &m->m_list) {
         struct map_entry *me = atf_list_iter_data(iter);
 
-        if (me->m_managed)
+        if (me->m_managed) {
             free(me->m_value);
+            me->m_value = NULL;
+        }
         free(me->m_key);
+        me->m_key = NULL;
         free(me);
     }
     atf_list_fini(&m->m_list);
@@ -358,15 +361,19 @@ atf_map_insert(atf_map_t *m, const char *key, void *value, bool managed)
         else {
             err = atf_list_append(&m->m_list, me, false);
             if (atf_is_error(err)) {
-                if (managed)
+                if (managed) {
                     free(value);
+                    value = NULL;
+                }
                 free(me);
             }
         }
     } else {
         me = iter.m_entry;
-        if (me->m_managed)
+        if (me->m_managed) {
             free(me->m_value);
+            me->m_value = NULL;
+        }
 
         INV(strcmp(me->m_key, key) == 0);
         me->m_value = value;
