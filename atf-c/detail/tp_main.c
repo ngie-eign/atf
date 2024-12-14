@@ -486,8 +486,6 @@ run_tc(const atf_tp_t *tp, struct params *p, int *exitcode)
 {
     atf_error_t err;
 
-    err = atf_no_error();
-
     if (!atf_tp_has_tc(tp, p->m_tcname)) {
         err = usage_error("Unknown test case `%s'", p->m_tcname);
         goto out;
