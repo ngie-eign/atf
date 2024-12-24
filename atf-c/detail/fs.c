@@ -35,6 +35,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
+#include <assert.h>
 #include <dirent.h>
 #include <errno.h>
 #include <libgen.h>
@@ -200,16 +201,22 @@ current_umask(void)
 
 static
 atf_error_t
-do_mkdtemp(char *tmpl)
+do_mkdtemp(char *tmpl ATF_DEFS_ATTRIBUTE_NONNULL)
 {
     atf_error_t err;
 
+    PRE(tmpl);
+    /**
+     * Help scan-build by using assert(..), because it's not properly
+     * instrumenting PRE(..).
+     */
+    assert(tmpl);
     PRE(strstr(tmpl, "XXXXXX") != NULL);
 
-    if (mkdtemp(tmpl) == NULL)
+    if (mkdtemp(tmpl) == NULL) {
         err = atf_libc_error(errno, "Cannot create temporary directory "
                              "with template '%s'", tmpl);
-    else
+    } else
         err = atf_no_error();
 
     return err;
@@ -217,18 +224,23 @@ do_mkdtemp(char *tmpl)
 
 static
 atf_error_t
-do_mkstemp(char *tmpl, int *fdout)
+do_mkstemp(char *tmpl ATF_DEFS_ATTRIBUTE_NONNULL, int *fdout)
 {
     atf_error_t err;
 
+    PRE(tmpl);
+    /**
+     * Help scan-build by using assert(..), because it's not properly
+     * instrumenting PRE(..).
+     */
+    assert(tmpl);
     PRE(strstr(tmpl, "XXXXXX") != NULL);
 
     *fdout = mkstemp(tmpl);
-    if (*fdout == -1)
+    if (*fdout == -1) {
         err = atf_libc_error(errno, "Cannot create temporary file "
                              "with template '%s'", tmpl);
-
-    else
+    } else
         err = atf_no_error();
 
     return err;
