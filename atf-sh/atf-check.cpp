@@ -134,7 +134,7 @@ public:
     {
         close();
         try {
-            remove(*m_path);
+            atf::fs::remove(*m_path);
         } catch (const atf::system_error&) {
             // Ignore deletion errors.
         }
