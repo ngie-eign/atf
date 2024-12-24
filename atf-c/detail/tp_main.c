@@ -290,19 +290,20 @@ list_tcs(const atf_tp_t *tp)
 
 static
 atf_error_t
-handle_tcarg(const char *tcarg, char **tcname, enum tc_part *tcpart)
+handle_tcarg(const char *tcarg, char **tcname_out, enum tc_part *tcpart)
 {
     atf_error_t err;
+    char *tcname = NULL;
 
     err = atf_no_error();
 
-    *tcname = strdup(tcarg);
-    if (*tcname == NULL) {
+    tcname = strdup(tcarg);
+    if (tcname == NULL) {
         err = atf_no_memory_error();
         goto out;
     }
 
-    char *delim = strchr(*tcname, ':');
+    char *delim = strchr(tcname, ':');
     if (delim != NULL) {
         *delim = '\0';
 
@@ -313,9 +314,14 @@ handle_tcarg(const char *tcarg, char **tcname, enum tc_part *tcpart)
             *tcpart = CLEANUP;
         } else {
             err = usage_error("Invalid test case part `%s'", delim);
-            goto out;
         }
     }
+
+    if (atf_is_error(err)) {
+        free(tcname);
+        *tcname_out = NULL;
+    } else
+        *tcname_out = tcname;
 
 out:
     return err;
@@ -329,9 +335,7 @@ process_params(int argc, char **argv, struct params *p)
     int ch;
     int old_opterr;
 
-    err = params_init(p, argv[0]);
-    if (atf_is_error(err))
-        goto out;
+    err = atf_no_error();
 
     old_opterr = opterr;
     opterr = 0;
@@ -389,10 +393,6 @@ process_params(int argc, char **argv, struct params *p)
         }
     }
 
-    if (atf_is_error(err))
-        params_fini(p);
-
-out:
     return err;
 }
 
@@ -546,9 +546,13 @@ controlled_main(int argc, char **argv,
     atf_tp_t tp;
     char **raw_config;
 
-    err = process_params(argc, argv, &p);
+    err = params_init(&p, argv[0]);
     if (atf_is_error(err))
         goto out;
+
+    err = process_params(argc, argv, &p);
+    if (atf_is_error(err))
+        goto out_p;
 
     err = handle_srcdir(&p);
     if (atf_is_error(err))
