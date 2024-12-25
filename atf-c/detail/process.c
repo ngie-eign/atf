@@ -278,6 +278,7 @@ atf_process_child_wait(atf_process_child_t *c, atf_process_status_t *s)
     atf_error_t err;
     int status;
 
+    PRE(0 < c->m_pid);
     if (waitpid(c->m_pid, &status, 0) == -1)
         err = atf_libc_error(errno, "Failed waiting for process %d",
                              c->m_pid);
@@ -625,7 +626,7 @@ atf_process_exec_array(atf_process_status_t *s,
                        void (*prehook)(void))
 {
     atf_error_t err;
-    atf_process_child_t c;
+    atf_process_child_t c = { 0 };
     struct exec_args ea = { prog, argv, prehook };
 
     PRE(outsb == NULL ||
