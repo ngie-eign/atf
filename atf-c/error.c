@@ -25,6 +25,7 @@
 
 #include "atf-c/error.h"
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -255,10 +256,14 @@ no_memory_format(const atf_error_t err, char *buf, size_t buflen)
 atf_error_t
 atf_no_memory_error(void)
 {
+    bool ok;
+
     PRE(!error_on_flight);
 
-    error_init(&no_memory_error, "no_memory", NULL, 0,
+    ok = error_init(&no_memory_error, "no_memory", NULL, 0,
                no_memory_format);
+    PRE(ok);
+    assert(ok);  /* To aid scan-build/clang. */
 
     error_on_flight = true;
     return &no_memory_error;
