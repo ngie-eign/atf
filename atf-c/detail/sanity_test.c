@@ -85,6 +85,8 @@ do_test_child(void *v)
     exit(EXIT_SUCCESS);
 }
 
+#define	MAX_LINES	3
+
 static
 void
 do_test(enum type t, bool cond)
@@ -92,7 +94,7 @@ do_test(enum type t, bool cond)
     atf_process_child_t child;
     atf_process_status_t status;
     int nlines;
-    char *lines[3];
+    char *lines[MAX_LINES];
 
     {
         atf_process_stream_t outsb, errsb;
@@ -106,10 +108,10 @@ do_test(enum type t, bool cond)
     }
 
     nlines = 0;
-    while (nlines < 3 && (lines[nlines] =
+    while (nlines < MAX_LINES && (lines[nlines] =
            atf_utils_readline(atf_process_child_stderr(&child))) != NULL)
         nlines++;
-    ATF_REQUIRE(nlines == 0 || nlines == 3);
+    ATF_REQUIRE(nlines == 0 || nlines == MAX_LINES);
 
     RE(atf_process_child_wait(&child, &status));
     if (!cond) {
@@ -141,7 +143,9 @@ do_test(enum type t, bool cond)
         }
 
         ATF_REQUIRE(atf_utils_grep_string(__FILE__, lines[0]));
-        ATF_REQUIRE(atf_utils_grep_string(PACKAGE_BUGREPORT, lines[2]));
+        ATF_REQUIRE(
+            nlines == 0 ||
+            atf_utils_grep_string(PACKAGE_BUGREPORT, lines[MAX_LINES - 1]));
     }
 
     while (nlines > 0) {
