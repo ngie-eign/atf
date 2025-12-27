@@ -37,6 +37,7 @@ extern "C" {
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <iostream>
 
 extern "C" {
@@ -207,11 +208,7 @@ impl::app::run(int argc, char* const* argv)
 
     m_argv0 = m_argv[0];
 
-    m_prog_name = std::strrchr(m_argv[0], '/');
-    if (m_prog_name == NULL)
-        m_prog_name = m_argv[0];
-    else
-        m_prog_name++;
+    m_prog_name = std::filesystem::path(m_argv[0]).filename().c_str();
 
     // Libtool workaround: if running from within the source tree (binaries
     // that are not installed yet), skip the "lt-" prefix added to files in
