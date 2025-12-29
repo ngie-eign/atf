@@ -3,6 +3,7 @@ env:
   ARCH: amd64
 
 task:
+  only_if: $CIRRUS_BRANCH =~ 'master'
   matrix:
     # ngie: as of 2025-12-28 the 16.0-CURRENT supplied image on GCP does not
     # boot (gets stuck trying to find the bootdisk). Disable it so Cirrus CI
@@ -31,7 +32,8 @@ task:
     - ASSUME_ALWAYS_YES=yes pkg bootstrap -f
     - pkg install -y autoconf automake libtool kyua pkgconf
   script:
-    - env JUNIT_OUTPUT=$(pwd)/test-results.xml ./admin/ci-build.sh
+    - ./admin/ci-build/01_configure.sh
+    - env JUNIT_OUTPUT="$(pwd)/test-results.xml" ./admin/ci-build/02_distcheck.sh
   always:
     junit_artifacts:
       path: "test-results.xml"
