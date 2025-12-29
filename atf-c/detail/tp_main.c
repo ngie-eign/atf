@@ -441,7 +441,7 @@ handle_srcdir(struct params *p)
         if (libs) {
             err = srcdir_strip_libtool(&srcdir);
             if (atf_is_error(err))
-                goto out;
+                goto out_srcdir;
         }
     }
 
