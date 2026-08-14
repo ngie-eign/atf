@@ -182,8 +182,10 @@ atf_map_init_charpp(atf_map_t *m, const char *const *array)
             ptr++;
 
             if ((value = *ptr) == NULL) {
-                err = atf_libc_error(EINVAL, "List too short; no value for "
-                    "key '%s' provided", key);  /* XXX: Not really libc_error */
+                /* XXX: Not really libc_error */
+                err = atf_libc_error(EINVAL,
+                    "List too short; no value for key '%s' provided",
+                    key);
                 break;
             }
             ptr++;
