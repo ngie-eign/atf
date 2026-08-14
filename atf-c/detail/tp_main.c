@@ -369,19 +369,19 @@ process_params(int argc, char **argv, struct params *p)
     optreset = 1;
 #endif
 
-    if (!atf_is_error(err)) {
-        if (p->m_do_list) {
-            if (argc > 0)
-                err = usage_error("Cannot provide test case names with -l");
-        } else {
-            if (argc == 0)
-                err = usage_error("Must provide a test case name");
-            else if (argc == 1)
-                err = handle_tcarg(argv[0], &p->m_tcname, &p->m_tcpart);
-            else if (argc > 1) {
-                err = usage_error("Cannot provide more than one test case "
-                                  "name");
-            }
+    if (atf_is_error(err))
+        return err;
+
+    if (p->m_do_list) {
+        if (argc > 0)
+            err = usage_error("Cannot provide test case names with -l");
+    } else {
+        if (argc == 0)
+            err = usage_error("Must provide a test case name");
+        else if (argc == 1)
+            err = handle_tcarg(argv[0], &p->m_tcname, &p->m_tcpart);
+        else if (argc > 1) {
+            err = usage_error("Cannot provide more than one test case name");
         }
     }
 
@@ -397,13 +397,12 @@ srcdir_strip_libtool(atf_fs_path_t *srcdir)
 
     err = atf_fs_path_branch_path(srcdir, &parent);
     if (atf_is_error(err))
-        goto out;
+        return err;
 
     atf_fs_path_fini(srcdir);
     *srcdir = parent;
 
     INV(!atf_is_error(err));
-out:
     return err;
 }
 
@@ -418,7 +417,7 @@ handle_srcdir(struct params *p)
 
     err = atf_fs_path_copy(&srcdir, &p->m_srcdir);
     if (atf_is_error(err))
-        goto out;
+        return err;
 
     if (!atf_fs_path_is_absolute(&srcdir)) {
         atf_fs_path_t srcdirabs;
@@ -468,7 +467,6 @@ out_exe:
     atf_fs_path_fini(&exe);
 out_srcdir:
     atf_fs_path_fini(&srcdir);
-out:
     return err;
 }
 
