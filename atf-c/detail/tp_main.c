@@ -293,6 +293,7 @@ atf_error_t
 handle_tcarg(const char *tcarg, char **tcname_out, enum tc_part *tcpart)
 {
     char *delim, *tcname;
+    atf_error_t err = atf_no_error();
 
     *tcname_out = NULL;
     tcname = strdup(tcarg);
@@ -310,13 +311,13 @@ handle_tcarg(const char *tcarg, char **tcname_out, enum tc_part *tcpart)
         } else if (strcmp(delim, "cleanup") == 0) {
             *tcpart = CLEANUP;
         } else {
+            err = usage_error("Invalid test case part `%s'", delim);
             free(tcname);
-            return usage_error("Invalid test case part `%s'", delim);
         }
     }
 
     *tcname_out = tcname;
-    return atf_no_error();
+    return err;
 }
 
 static
@@ -476,6 +477,8 @@ run_tc(const atf_tp_t *tp, struct params *p, int *exitcode)
 {
     atf_error_t err;
 
+    err = atf_no_error();
+
     if (!atf_tp_has_tc(tp, p->m_tcname))
         return usage_error("Unknown test case `%s'", p->m_tcname);
 
@@ -516,7 +519,6 @@ run_tc(const atf_tp_t *tp, struct params *p, int *exitcode)
         UNREACHABLE;
     }
 
-    INV(!atf_is_error(err));
     return err;
 }
 

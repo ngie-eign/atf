@@ -105,9 +105,8 @@ find_sources() {
               \! -name "ltsugar.m4" \
               \! -name "lt~obsolete.m4" \
               \! -name "*.so.*" \
-           \) -a \( \
-              \! -regex '.*/externals/.+' \
-           \)
+           \) | grep -v \
+              externals/
 }
 
 #
