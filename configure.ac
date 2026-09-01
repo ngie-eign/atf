@@ -1,4 +1,5 @@
 dnl Copyright (c) 2007 The NetBSD Foundation, Inc.
+dnl Copyright (c) 2024-2026 Enji Cooper <ngie@FreeBSD.org>.
 dnl All rights reserved.
 dnl
 dnl Redistribution and use in source and binary forms, with or without
@@ -27,7 +28,7 @@ dnl -----------------------------------------------------------------------
 dnl Initialize the GNU build system.
 dnl -----------------------------------------------------------------------
 
-AC_INIT([Automated Testing Framework], [0.24],
+AC_INIT([Automated Testing Framework], [0.25],
         [freebsd-testing@freebsd.org], [atf],
         [https://github.com/freebsd/atf/])
 AC_PREREQ([2.68])
