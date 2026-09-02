@@ -1,13 +1,11 @@
 #!/bin/sh
 #
-# Copyright (c) 2026 Enji Cooper.
-#
-# SPDX-License-Identifier: BSD-2-Clause
-
 # Step 2: run `make distcheck`.
 #
 # `make distcheck` builds the tests, runs them, and subsequently performs a
 # style check on the code.
+#
+# SPDX-License-Identifier: BSD-2-Clause
 
 set -eux
 
