@@ -2,10 +2,12 @@
 
 ## Changes in version 0.25
 
-Released on 20XX/YY/ZZ.
+Released on 2026/09/01.
 
-### Feature Enhancements
+### Bugfixes
 
+* Issue #187: Fix the build on NetBSD by renaming a variable added in
+  version 0.24.
 
 **Full Changelog**: https://github.com/freebsd/atf/compare/atf-0.24...atf-0.25
 
