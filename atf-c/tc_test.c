@@ -156,6 +156,56 @@ ATF_TC_BODY(config, tcin)
     atf_tc_fini(&tc);
 }
 
+ATF_TC(require_prog_absolute);
+ATF_TC_HEAD(require_prog_absolute, tc)
+{
+    atf_tc_set_md_var(tc, "descr",
+        "atf_require_prog: ensures that a test continues if the target program "
+        "is found (absolute).");
+}
+ATF_TC_BODY(require_prog_absolute, tc)
+{
+    atf_tc_require_prog("/bin/sh");
+}
+
+ATF_TC(require_prog_negative_absolute);
+ATF_TC_HEAD(require_prog_negative_absolute, tc)
+{
+    atf_tc_set_md_var(tc, "descr",
+        "atf_require_prog: skips test if the target program is not found "
+        "(absolute).");
+}
+ATF_TC_BODY(require_prog_negative_absolute, tc)
+{
+    atf_tc_expect_fail("This should fail.");
+    atf_tc_require_prog("/nonexistent");
+}
+
+ATF_TC(require_prog_negative_nonabsolute);
+ATF_TC_HEAD(require_prog_negative_nonabsolute, tc)
+{
+    atf_tc_set_md_var(tc, "descr",
+        "atf_require_prog: skips test if the target program is not found "
+        "(non-absolute).");
+}
+ATF_TC_BODY(require_prog_negative_nonabsolute, tc)
+{
+    atf_tc_expect_fail("This should fail.");
+    atf_tc_require_prog("nonexistent");
+}
+
+ATF_TC(require_prog_nonabsolute);
+ATF_TC_HEAD(require_prog_nonabsolute, tc)
+{
+    atf_tc_set_md_var(tc, "descr",
+        "atf_require_prog: ensures that a test continues if the target program "
+        "is found (non-absolute).");
+}
+ATF_TC_BODY(require_prog_nonabsolute, tc)
+{
+    atf_tc_require_prog("true");
+}
+
 /* ---------------------------------------------------------------------
  * Test cases for the free functions.
  * --------------------------------------------------------------------- */
@@ -175,6 +225,10 @@ ATF_TP_ADD_TCS(tp)
     ATF_TP_ADD_TC(tp, init_pack);
     ATF_TP_ADD_TC(tp, vars);
     ATF_TP_ADD_TC(tp, config);
+    ATF_TP_ADD_TC(tp, require_prog_absolute);
+    ATF_TP_ADD_TC(tp, require_prog_negative_absolute);
+    ATF_TP_ADD_TC(tp, require_prog_negative_nonabsolute);
+    ATF_TP_ADD_TC(tp, require_prog_nonabsolute);
 
     /* Add the test cases for the free functions. */
     /* TODO */
