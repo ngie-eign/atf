@@ -106,7 +106,7 @@ jobs:
                   which -a kyua
             - name: Configure
               run: |
-                  CFG_ARGS=""
+                  CFG_ARGS="--enable-developer"
                   for i in ${{ join(matrix.sanitize, ' ') }}; do
                       CFG_ARGS="${CFG_ARGS} --enable-${i}"
                   done
@@ -248,7 +248,7 @@ jobs:
             - name: Configure
               shell: freebsd {0}
               run: |
-                  CFG_ARGS=""
+                  CFG_ARGS="--enable-developer"
                   for i in ${{ join(matrix.sanitize, ' ') }}; do
                       CFG_ARGS="${CFG_ARGS} --enable-${i}"
                   done
