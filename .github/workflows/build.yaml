@@ -86,9 +86,7 @@ jobs:
                       compiler-bindir: /usr/lib/llvm-18/bin
                 sanitize:
                     - ""
-                    # TODO(ngie,77): tests currently fail when these options
-                    #                are enabled.
-                    # - ["asan", "lsan"]
+                    - ["asan", "lsan"]
                     - ubsan
 
         steps:
