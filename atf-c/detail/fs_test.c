@@ -897,7 +897,7 @@ static
 void
 do_umask_check(atf_error_t (*const mk_func)(atf_fs_path_t *),
                atf_error_t (*const rm_func)(const atf_fs_path_t *),
-               atf_fs_path_t *tmpl, const mode_t test_mask,
+               const atf_fs_path_t *tmpl, const mode_t test_mask,
                const char *exp_name)
 {
     atf_fs_path_t path;
@@ -915,6 +915,8 @@ do_umask_check(atf_error_t (*const mk_func)(atf_fs_path_t *),
     ATF_REQUIRE(!atf_is_error(err));
     ATF_CHECK_EQ(post_mask, test_mask);
     RE(rm_func(&path));
+
+    atf_fs_path_fini(&path);
 }
 
 ATF_TC(mkdtemp_umask);
