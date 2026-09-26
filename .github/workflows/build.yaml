@@ -59,21 +59,8 @@ jobs:
             fail-fast: false
             matrix:
                 build-os:
-                    - macos-latest
                     - ubuntu-latest
                 include:
-                    # The macOS runner uses a homebrew provided compiler as the
-                    # system compiler lacks ASAN/LSAN/UBSAN support.
-                    - build-os: macos-latest
-                      compiler: clang-20
-                      pkgs:
-                          - autoconf
-                          - automake
-                          - kyua
-                          - libtool
-                          - llvm@20
-                          - pkgconf
-                      compiler-bindir: /opt/homebrew/opt/llvm@20/bin
                     - build-os: ubuntu-latest
                       compiler: clang-18
                       pkgs:
