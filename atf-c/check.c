@@ -462,7 +462,7 @@ atf_check_exec_array(const char *const *argv, atf_check_result_t *r)
 
     err = create_tmpdir(&dir);
     if (atf_is_error(err))
-        goto out;
+        return err;
 
     err = atf_check_result_init(r, argv, &dir);
     if (atf_is_error(err)) {
@@ -480,7 +480,7 @@ atf_check_exec_array(const char *const *argv, atf_check_result_t *r)
 
     INV(!atf_is_error(err));
 
-    atf_fs_path_fini(&dir);
 out:
+    atf_fs_path_fini(&dir);
     return err;
 }
