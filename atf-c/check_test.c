@@ -242,6 +242,8 @@ ATF_TC_BODY(build_c_o, tc)
 
     init_and_run_h_tc(&ATF_TC_NAME(h_build_c_o_fail),
              &ATF_TC_PACK_NAME(h_build_c_o_fail), "stdout", "stderr");
+
+    system("echo cat stdout; cat stdout");
     ATF_CHECK(atf_utils_grep_file("-o test.o", "stdout"));
     ATF_CHECK(atf_utils_grep_file("-c test.c", "stdout"));
     ATF_CHECK(atf_utils_grep_file("test.c", "stderr"));
