@@ -1,0 +1,11 @@
+[commit]
+ai_attribution = "disclose"
+allow_empty_commits = false
+allow_fixup_commits = false
+allow_merge_commits = false
+allow_wip_commits = false
+author_name = true
+author_email = true
+# Reject commits authored by anonymous GitHub accounts.
+author_email_pattern = "(?i)^(?!.*@users\.noreply\.github\.com$).+@.+$"
+require_signed_off_by = true
