@@ -108,22 +108,30 @@
         }                                                         \
     } while (false)
 
-#define ATF_REQUIRE_EQ(expected, actual)                        \
-    do {                                                        \
-        if ((expected) != (actual)) {                           \
-            std::ostringstream atfu_ss;                         \
-            atfu_ss << "Line " << __LINE__ << ": " << #expected \
-                    << " != " << #actual << " (" << (expected)  \
-                    << " != " << (actual) << ")";               \
-            atf::tests::tc::fail(atfu_ss.str());                \
-        }                                                       \
+#define ATF_REQUIRE_EQ(expected, actual)                          \
+    do {                                                          \
+        auto _actual_val = (actual);                              \
+        auto _expected_val = (expected);                          \
+        if (_expected_val != _actual_val) {                       \
+            std::ostringstream atfu_ss;                           \
+            atfu_ss << "Line " << __LINE__ << ": " << #expected   \
+                    << " != " << #actual << " (" << _expected_val \
+                    << " != " << _actual_val << ")";              \
+            atf::tests::tc::fail(atfu_ss.str());                  \
+        }                                                         \
     } while (false)
 
-#define ATF_REQUIRE_IN(element, collection) \
-    ATF_REQUIRE((collection).find(element) != (collection).end())
+#define ATF_REQUIRE_IN(element, collection)                          \
+    do {                                                             \
+        auto _collection = collection;                               \
+        ATF_REQUIRE(_collection.find(element) != _collection.end()); \
+    } while (false)
 
-#define ATF_REQUIRE_NOT_IN(element, collection) \
-    ATF_REQUIRE((collection).find(element) == (collection).end())
+#define ATF_REQUIRE_NOT_IN(element, collection)                      \
+    do {                                                             \
+        auto _collection = collection;                               \
+        ATF_REQUIRE(_collection.find(element) == _collection.end()); \
+    } while (false)
 
 #define ATF_REQUIRE_MATCH(regexp, string)                                      \
     do {                                                                       \
